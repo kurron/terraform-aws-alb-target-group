@@ -33,27 +33,57 @@ variable "freetext" {
     description = "Information that does not fit in the other tags"
 }
 
-variable "internal" {
+variable "port" {
     type = "string"
-    description = "If set to Yes, the load balancer can only be seen from inside the VPC, otherwise it is publicly available."
+    description = "The port on which targets receive traffic."
 }
 
-variable "security_group_ids" {
-    type = "list"
-    description = "List of security group IDs to apply to the balancer"
-}
-
-variable "subnet_ids" {
-    type = "list"
-    description = "List of subnet IDs the balancer can access"
-}
-
-variable "s3_bucket" {
+variable "protocol" {
     type = "string"
-    description = "S3 bucket to store the access logs in"
+    description = "The protocol to use for routing traffic to the targets."
 }
 
-variable "log_access" {
+variable "vpc_id" {
     type = "string"
-    description = "If set to Yes, access logs will be written to S3, otherwise no logs are written."
+    description = "The identifier of the VPC in which to create the target group."
+}
+
+variable "enable_stickiness" {
+    type = "string"
+    description = "If set to Yes, the balancer will attempt to route clients to a consistent back end."
+}
+
+variable "health_check_interval" {
+    type = "string"
+    description = "The approximate amount of time, in seconds, between health checks of an individual target."
+}
+
+variable "health_check_path" {
+    type = "string"
+    description = "The destination for the health check request."
+}
+
+variable "health_check_protocol" {
+    type = "string"
+    description = "The protocol to use to connect with the target."
+}
+
+variable "health_check_timeout" {
+    type = "string"
+    description = "The amount of time, in seconds, during which no response means a failed health check."
+}
+
+variable "health_check_healthy_threshold" {
+    type = "string"
+    description = "The number of consecutive health checks successes required before considering an unhealthy target healthy."
+}
+
+variable "unhealthy_threshold" {
+    type = "string"
+    description = "The number of consecutive health check failures required before considering the target unhealthy."
+}
+
+variable "matcher" {
+    type = "string"
+    description = "The HTTP codes to use when checking for a successful response from a target."
 }

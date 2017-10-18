@@ -12,52 +12,29 @@ data "terraform_remote_state" "vpc" {
     }
 }
 
-data "terraform_remote_state" "security-groups" {
-    backend = "s3"
-    config {
-        bucket = "transparent-test-terraform-state"
-        key    = "us-west-2/debug/networking/security-groups/terraform.tfstate"
-        region = "us-east-1"
-    }
-}
-
-module "alb" {
+module "target-group" {
     source = "../"
 
-    region             = "us-west-2"
-    name               = "Ultron"
-    project            = "Debug"
-    purpose            = "Fronts Docker containers"
-    creator            = "kurron@jvmguy.com"
-    environment        = "development"
-    freetext           = "No notes at this time."
-    internal           = "No"
-    security_group_ids = ["${data.terraform_remote_state.security-groups.alb_id}"]
-    subnet_ids         = "${data.terraform_remote_state.vpc.public_subnet_ids}"
-    s3_bucket          = "transparent-test-access-logs"
-    log_access         = "No"
+    region                         = "us-west-2"
+    name                           = "Ultron"
+    project                        = "Debug"
+    purpose                        = "Balance to Ultron containers"
+    creator                        = "kurron@jvmguy.com"
+    environment                    = "development"
+    freetext                       = "No notes at this time."
+    port                           = "8080"
+    protocol                       = "HTTP"
+    vpc_id                         = "${data.terraform_remote_state.vpc.vpc_id}"
+    enable_stickiness              = "No"
+    health_check_interval          = "30"
+    health_check_path              = "/operations/health"
+    health_check_protocol          = "HTTP"
+    health_check_timeout           = "5"
+    health_check_healthy_threshold = "5"
+    unhealthy_threshold            = "2"
+    matcher                        = "200-299"
 }
 
 output "alb_id" {
     value = "${module.alb.alb_id}"
-}
-
-output "alb_arn" {
-    value = "${module.alb.alb_arn}"
-}
-
-output "alb_arn_suffix" {
-    value = "${module.alb.alb_arn_suffix}"
-}
-
-output "alb_dns_name" {
-    value = "${module.alb.alb_dns_name}"
-}
-
-output "canonical_hosted_zone_id" {
-    value = "${module.alb.canonical_hosted_zone_id}"
-}
-
-output "alb_zone_id" {
-    value = "${module.alb.alb_zone_id}"
 }

@@ -7,15 +7,27 @@ provider "aws" {
     region     = "${var.region}"
 }
 
-resource "aws_lb" "alb" {
-    name_prefix                = "alb-"
-    internal                   = "${var.internal == "Yes" ? true : false}"
-    load_balancer_type         = "application"
-    security_groups            = ["${var.security_group_ids}"]
-    subnets                    = ["${var.subnet_ids}"]
-    idle_timeout               = 60
-    enable_deletion_protection = false
-    ip_address_type            = "ipv4"
+resource "aws_lb_target_group" "group" {
+    name_prefix = "${var.name}-"
+    port     = "${var.port}"
+    protocol = "${var.protocol}"
+    vpc_id   = "${var.vpc_id}"
+    deregistration_delay = 300
+    stickiness {
+        type            = "lb_cookie"
+        cookie_duration = 86400
+        enabled         = "${var.enable_stickiness == "Yes" ? true : false}"
+    }
+    health_check {
+        interval            = "${var.health_check_interval}"
+        path                = "${var.health_check_path}"
+        port                = "traffic-port"
+        protocol            = "${var.health_check_protocol}"
+        timeout             = "${var.health_check_timeout}"
+        healthy_threshold   = "${var.health_check_healthy_threshold}"
+        unhealthy_threshold = "${var.unhealthy_threshold}"
+        matcher             = "${var.matcher}"
+    }
     tags {
         Name        = "${var.name}"
         Project     = "${var.project}"
@@ -24,9 +36,4 @@ resource "aws_lb" "alb" {
         Environment = "${var.environment}"
         Freetext    = "${var.freetext}"
     }
-     timeouts {
-         create = "10m"
-         update = "10m"
-         delete = "10m"
-     }
 }
