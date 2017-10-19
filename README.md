@@ -1,7 +1,7 @@
 # Overview
-This Terraform module creates an [Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/)
-that can be configured to accept traffic only from specific origins, forwarding
-to specific EC2 instances.
+This Terraform module creates a [Target Group](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html)/
+[Listener](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html)
+pair, which are added to the specified Application Load Balancer.
 
 # Prerequisites
 * [Terraform](https://terraform.io/) installed and working
@@ -21,10 +21,6 @@ for example usage.
 The `debug` folder contains files that can be used to test out local changes
 to the module.  Edit `backend.cfg` and `plan.tf` to your liking and
 then run `debug/debug-module.sh` to test your changes.
-
-## Limiting Instance Count
-The number of created instances can be controlled by setting `instance_limit`
-to a non `0` value.  A value of `0` results in one instance per subnet.
 
 # Troubleshooting
 
