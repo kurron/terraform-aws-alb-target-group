@@ -8,10 +8,10 @@ provider "aws" {
 }
 
 resource "aws_lb_target_group" "group" {
-    name_prefix = "${var.name}-"
-    port     = "${var.port}"
-    protocol = "${var.protocol}"
-    vpc_id   = "${var.vpc_id}"
+    name_prefix          = "alb-"
+    port                 = "${var.port}"
+    protocol             = "${var.protocol}"
+    vpc_id               = "${var.vpc_id}"
     deregistration_delay = 300
     stickiness {
         type            = "lb_cookie"

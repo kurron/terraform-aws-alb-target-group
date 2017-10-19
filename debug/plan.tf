@@ -12,7 +12,7 @@ data "terraform_remote_state" "vpc" {
     }
 }
 
-module "target-group" {
+module "target_group" {
     source = "../"
 
     region                         = "us-west-2"
@@ -25,7 +25,7 @@ module "target-group" {
     port                           = "8080"
     protocol                       = "HTTP"
     vpc_id                         = "${data.terraform_remote_state.vpc.vpc_id}"
-    enable_stickiness              = "No"
+    enable_stickiness              = "Yes"
     health_check_interval          = "30"
     health_check_path              = "/operations/health"
     health_check_protocol          = "HTTP"
@@ -35,6 +35,14 @@ module "target-group" {
     matcher                        = "200-299"
 }
 
-output "alb_id" {
-    value = "${module.alb.alb_id}"
+output "target_group_id" {
+    value = "${module.target_group.target_group_id}"
+}
+
+output "target_group_arn" {
+    value = "${module.target_group.target_group_arn}"
+}
+
+output "target_group_arn_suffix" {
+    value = "${module.target_group.target_group_arn_suffix}"
 }
