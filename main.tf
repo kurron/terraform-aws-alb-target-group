@@ -37,3 +37,13 @@ resource "aws_lb_target_group" "group" {
         Freetext    = "${var.freetext}"
     }
 }
+
+resource "aws_lb_listener" "listener" {
+    load_balancer_arn = "${var.load_balancer_arn}"
+    port              = "${var.port}"
+    protocol          = "${var.protocol}"
+    default_action {
+       target_group_arn = "${aws_lb_target_group.group.arn}"
+       type             = "forward"
+    }
+}

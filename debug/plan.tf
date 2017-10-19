@@ -12,6 +12,15 @@ data "terraform_remote_state" "vpc" {
     }
 }
 
+data "terraform_remote_state" "alb" {
+    backend = "s3"
+    config {
+        bucket = "transparent-test-terraform-state"
+        key    = "us-west-2/debug/compute/alb/terraform.tfstate"
+        region = "us-east-1"
+    }
+}
+
 module "target_group" {
     source = "../"
 
@@ -22,7 +31,7 @@ module "target_group" {
     creator                        = "kurron@jvmguy.com"
     environment                    = "development"
     freetext                       = "No notes at this time."
-    port                           = "8080"
+    port                           = "80"
     protocol                       = "HTTP"
     vpc_id                         = "${data.terraform_remote_state.vpc.vpc_id}"
     enable_stickiness              = "Yes"
@@ -33,6 +42,7 @@ module "target_group" {
     health_check_healthy_threshold = "5"
     unhealthy_threshold            = "2"
     matcher                        = "200-299"
+    load_balancer_arn              = "${data.terraform_remote_state.alb.alb_arn}"
 }
 
 output "target_group_id" {
@@ -45,4 +55,12 @@ output "target_group_arn" {
 
 output "target_group_arn_suffix" {
     value = "${module.target_group.target_group_arn_suffix}"
+}
+
+output "listener_id" {
+    value = "${module.target_group.listener_id}"
+}
+
+output "listener_arn" {
+    value = "${module.target_group.listener_arn}"
 }

@@ -87,3 +87,8 @@ variable "matcher" {
     type = "string"
     description = "The HTTP codes to use when checking for a successful response from a target."
 }
+
+variable "load_balancer_arn" {
+    type = "string"
+    description = "The ARN of the load balancer to bind the listener to."
+}
