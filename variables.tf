@@ -92,3 +92,13 @@ variable "load_balancer_arn" {
     type = "string"
     description = "The ARN of the load balancer to bind the listener to."
 }
+
+variable "ssl_policy" {
+    type = "string"
+    description = "The name of the SSL Policy for the listener, e.g. ELBSecurityPolicy-TLS-1-2-2017-01"
+}
+
+variable "certificate_arn" {
+    type = "string"
+    description = "The ARN of the SSL server certificate"
+}

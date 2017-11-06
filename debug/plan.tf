@@ -3,6 +3,25 @@ terraform {
     backend "s3" {}
 }
 
+provider "aws" {
+    region = "${var.region}"
+}
+
+variable "region" {
+    type = "string"
+    default = "us-west-2"
+}
+
+variable "domain_name" {
+    type = "string"
+    default = "transparent.engineering"
+}
+
+data "aws_acm_certificate" "certificate" {
+    domain   = "*.${var.domain_name}"
+    statuses = ["ISSUED"]
+}
+
 data "terraform_remote_state" "vpc" {
     backend = "s3"
     config {
@@ -24,25 +43,27 @@ data "terraform_remote_state" "alb" {
 module "target_group" {
     source = "../"
 
-    region                         = "us-west-2"
+    region                         = "${var.region}"
     name                           = "Ultron"
     project                        = "Debug"
     purpose                        = "Balance to Ultron containers"
     creator                        = "kurron@jvmguy.com"
     environment                    = "development"
-    freetext                       = "No notes at this time."
-    port                           = "80"
-    protocol                       = "HTTP"
+    freetext                       = "Using TLS communications"
+    port                           = "8443"
+    protocol                       = "HTTPS"
     vpc_id                         = "${data.terraform_remote_state.vpc.vpc_id}"
     enable_stickiness              = "Yes"
-    health_check_interval          = "30"
+    health_check_interval          = "15"
     health_check_path              = "/operations/health"
-    health_check_protocol          = "HTTP"
+    health_check_protocol          = "HTTPS"
     health_check_timeout           = "5"
     health_check_healthy_threshold = "5"
     unhealthy_threshold            = "2"
     matcher                        = "200-299"
     load_balancer_arn              = "${data.terraform_remote_state.alb.alb_arn}"
+    ssl_policy                     = "ELBSecurityPolicy-TLS-1-2-2017-01"
+    certificate_arn                = "${data.aws_acm_certificate.certificate.arn}"
 }
 
 output "target_group_id" {
