@@ -1,7 +1,10 @@
 # Overview
 This Terraform module creates a [Target Group](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html)/
 [Listener](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html)
-pair, which are added to the specified Application Load Balancer.
+pair, which are added to the specified Application Load Balancer.  This useful
+if you are partitioning your services by port, e.g. port 1234 maps to Service A
+and port 5678 maps to Service B.  The use of ALB Listener Rules is a more
+elegant solution.
 
 # Prerequisites
 * [Terraform](https://terraform.io/) installed and working
